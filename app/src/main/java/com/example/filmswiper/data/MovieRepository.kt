@@ -2,7 +2,7 @@ package com.example.filmswiper.data
 
 class MovieRepository {
 
-    // Na razie tylko lista w pamięci – później można to podmienić na Room/API
+    // Na razie prosta baza w pamięci – później można to podmienić na Room/API
     private val movies = mutableListOf(
         Movie(
             id = 1L,
@@ -35,6 +35,54 @@ class MovieRepository {
             year = 2001,
             genres = listOf("Animation", "Fantasy"),
             rating = 8.6
+        ),
+        Movie(
+            id = 5L,
+            title = "Interstellar",
+            overview = "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+            year = 2014,
+            genres = listOf("Sci-Fi", "Drama"),
+            rating = 8.6
+        ),
+        Movie(
+            id = 6L,
+            title = "Fight Club",
+            overview = "An insomniac office worker and a soap maker form an underground fight club.",
+            year = 1999,
+            genres = listOf("Drama"),
+            rating = 8.8
+        ),
+        Movie(
+            id = 7L,
+            title = "Whiplash",
+            overview = "A young drummer enrolls at a cut-throat music conservatory.",
+            year = 2014,
+            genres = listOf("Drama", "Music"),
+            rating = 8.5
+        ),
+        Movie(
+            id = 8L,
+            title = "The Matrix",
+            overview = "A computer hacker learns about the true nature of reality and his role in the war.",
+            year = 1999,
+            genres = listOf("Sci-Fi", "Action"),
+            rating = 8.7
+        ),
+        Movie(
+            id = 9L,
+            title = "Pulp Fiction",
+            overview = "The lives of two mob hitmen, a boxer, and others intertwine in a tale of violence and redemption.",
+            year = 1994,
+            genres = listOf("Crime", "Drama"),
+            rating = 8.9
+        ),
+        Movie(
+            id = 10L,
+            title = "The Social Network",
+            overview = "The story of the founders of Facebook.",
+            year = 2010,
+            genres = listOf("Drama", "Biography"),
+            rating = 7.8
         )
     )
 
