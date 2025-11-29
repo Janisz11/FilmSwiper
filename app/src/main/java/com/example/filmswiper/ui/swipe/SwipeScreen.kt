@@ -1,6 +1,14 @@
 package com.example.filmswiper.ui.swipe
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -13,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.filmswiper.data.Movie
 
 @Composable
@@ -59,6 +68,17 @@ private fun MovieCard(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
+            // 👇 plakat filmu (jeśli jest URL)
+            movie.posterUrl?.let { url ->
+                AsyncImage(
+                    model = url,
+                    contentDescription = "Poster for ${movie.title}",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+            }
+
             Text(
                 text = movie.title,
                 style = MaterialTheme.typography.headlineMedium
@@ -74,7 +94,9 @@ private fun MovieCard(
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = "Gatunki: ${movie.genres.joinToString()}",
+                text = "Gatunki: ${
+                    if (movie.genres.isEmpty()) "-" else movie.genres.joinToString()
+                }",
                 style = MaterialTheme.typography.bodySmall
             )
         }

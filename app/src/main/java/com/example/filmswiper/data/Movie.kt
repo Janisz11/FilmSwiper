@@ -6,7 +6,8 @@ data class Movie(
     val overview: String,
     val year: Int?,
     val genres: List<String>,
-    val rating: Double?,           // np. ocena z TMDB/IMDB
-    val status: MovieStatus = MovieStatus.NEW,
-    val userRating: Int? = null    // Twoja ocena (1–10)
+    val rating: Double?,
+    val status: MovieStatus,
+    val userRating: Int?,
+    val posterUrl: String? // 👈 NOWE
 )

@@ -1,11 +1,8 @@
 package com.example.filmswiper.ui.list
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
@@ -26,7 +23,6 @@ import com.example.filmswiper.ui.swipe.SwipeViewModel
 fun MovieListScreen(
     viewModel: SwipeViewModel = viewModel()
 ) {
-    // obserwujemy stan z ViewModelu
     val movies by viewModel.allMovies.collectAsState()
 
     Surface(
@@ -45,40 +41,11 @@ fun MovieListScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp)
             ) {
-                items(movies) { movie ->
+                items(movies) { movie: Movie ->
                     MovieListItem(movie = movie)
                     Divider()
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun MovieListItem(
-    movie: Movie
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable {
-                // TODO: później można dodać przejście do ekranu szczegółów
-            }
-            .padding(vertical = 8.dp)
-    ) {
-        Text(
-            text = movie.title,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Text(
-            text = "Rok: ${movie.year ?: "?"} · Gatunki: ${movie.genres.joinToString()}",
-            style = MaterialTheme.typography.bodySmall
-        )
-        movie.rating?.let {
-            Text(
-                text = "Ocena: $it",
-                style = MaterialTheme.typography.bodySmall
-            )
         }
     }
 }
