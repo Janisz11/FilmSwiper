@@ -1,0 +1,53 @@
+﻿# ========== Android Studio / IntelliJ ==========
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/.idea/shelf
+/.idea/tasks.xml
+.DS_Store
+
+# ========== Build files ==========
+/build/
+/*/build/
+/**/build/
+
+# ========== App build ==========
+app/build/
+
+# ========== Artifacts ==========
+*.apk
+*.ap_
+*.aab
+
+# ========== Keystore (never commit keys) ==========
+*.keystore
+*.jks
+
+# ========== Logs ==========
+*.log
+
+# ========== NDK ==========
+obj/
+.externalNativeBuild
+.cxx/
+
+# ========== Captures ==========
+captures/
+
+# ========== Misc ==========
+*.class
+*.kts~
+signing.properties
+
+# ========== OS files ==========
+Thumbs.db
+ehthumbs.db
+
+# Ignore Android Studio project files
+/.idea/
