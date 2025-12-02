@@ -45,11 +45,11 @@ object MovieMapper {
             year = entity.year,
             genres = entity.genres
                 .split(",")
-                .filter { it.isNotEmpty() }  // Remove empty strings,
-                    rating = entity.rating,
+                .filter { it.isNotEmpty() },  // ← PRZECINEK!
+            rating = entity.rating,
             posterUrl = entity.posterUrl,
-            status = MovieStatus.valueOf(entity.status),  // String → Enum
-            userRating = null  // Will be populated from RatingEntity
+            status = MovieStatus.valueOf(entity.status),
+            userRating = null
         )
     }
 
