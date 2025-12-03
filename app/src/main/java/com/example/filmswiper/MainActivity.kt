@@ -1,3 +1,4 @@
+// FILE: MainActivity.kt
 package com.example.filmswiper
 
 import android.os.Bundle
@@ -26,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.filmswiper.ui.filter.FilterScreen
+import com.example.filmswiper.ui.import.LetterboxdImportScreen
 import com.example.filmswiper.ui.list.MovieListScreen
-import com.example.filmswiper.ui.myfilms.MyFilmsScreen
+import com.example.filmswiper.ui.profile.MyFilmsScreen
+import com.example.filmswiper.ui.profile.ProfileScreen
 import com.example.filmswiper.ui.swipe.SwipeScreen
 import com.example.filmswiper.ui.swipe.SwipeViewModel
 import com.example.filmswiper.ui.theme.FilmSwiperTheme
@@ -40,64 +43,88 @@ class MainActivity : ComponentActivity() {
                 var selectedTab by remember { mutableStateOf("swipe") }
                 val viewModel: SwipeViewModel = viewModel()
 
-                Scaffold(
-                    topBar = {
-                        Row(
+                // Ekrany z własnym topBar (bez głównego Scaffold topBar/bottomBar)
+                val fullScreenTabs = listOf("myfilms", "import")
+
+                if (selectedTab in fullScreenTabs) {
+                    // Pełnoekranowe widoki bez bottom bar
+                    when (selectedTab) {
+                        "myfilms" -> MyFilmsScreen(
+                            viewModel = viewModel,
+                            onBack = { selectedTab = "profile" }
+                        )
+                        "import" -> LetterboxdImportScreen(
+                            viewModel = viewModel,
+                            onBack = {
+                                viewModel.resetLetterboxdState()
+                                selectedTab = "profile"
+                            }
+                        )
+                    }
+                } else {
+                    // Normalne widoki z navigation bar
+                    Scaffold(
+                        topBar = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "FilmSwiper",
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                                IconButton(onClick = { selectedTab = "filter" }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = "Filtruj filmy",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        },
+                        bottomBar = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Button(onClick = { selectedTab = "swipe" }) {
+                                    Text("Swipe 🎬")
+                                }
+                                Button(onClick = { selectedTab = "list" }) {
+                                    Text("Lista 📃")
+                                }
+                                Button(onClick = { selectedTab = "profile" }) {
+                                    Text("Profil 👤")
+                                }
+                            }
+                        }
+                    ) { innerPadding ->
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                                .fillMaxSize()
+                                .padding(innerPadding)
                         ) {
-                            Text(
-                                text = "FilmSwiper",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            // ✨ Lupka do filtrowania
-                            IconButton(onClick = { selectedTab = "filter" }) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = "Filtruj filmy",
-                                    tint = MaterialTheme.colorScheme.primary
+                            when (selectedTab) {
+                                "swipe" -> SwipeScreen(viewModel)
+                                "filter" -> FilterScreen(
+                                    viewModel = viewModel,
+                                    onApplyFilter = { filter ->
+                                        viewModel.applyFilter(filter)
+                                        selectedTab = "swipe"
+                                    }
+                                )
+                                "list" -> MovieListScreen(viewModel)
+                                "profile" -> ProfileScreen(
+                                    viewModel = viewModel,
+                                    onNavigateToImport = { selectedTab = "import" },
+                                    onNavigateToMyFilms = { selectedTab = "myfilms" }
                                 )
                             }
-                        }
-                    },
-                    bottomBar = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Button(onClick = { selectedTab = "swipe" }) {
-                                Text("Swipe 🎬")
-                            }
-                            Button(onClick = { selectedTab = "myfilms" }) {
-                                Text("Moje 🎥")
-                            }
-                            Button(onClick = { selectedTab = "list" }) {
-                                Text("Lista 📃")
-                            }
-                        }
-                    }
-                ) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        when (selectedTab) {
-                            "swipe" -> SwipeScreen(viewModel)
-                            "filter" -> FilterScreen(
-                                viewModel = viewModel,
-                                onApplyFilter = { filter ->
-                                    viewModel.applyFilter(filter)
-                                    selectedTab = "swipe"
-                                }
-                            )
-                            "myfilms" -> MyFilmsScreen(viewModel)
-                            "list" -> MovieListScreen(viewModel)
                         }
                     }
                 }

@@ -2,8 +2,9 @@
 
 plugins {
     id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")  // ✨ DODAJ TĘ LINIĘ
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")  // ← BEZ version!
+    kotlin("kapt")
 }
 
 android {

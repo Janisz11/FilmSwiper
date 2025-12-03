@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FilmSwiper - Architektura Projektu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            page-break-inside: avoid;
+        }
+        
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .architecture-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+            font-size: 0.9em;
+        }
+        
+        .phase {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .phase-title {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .phase-content {
+            color: #444;
+            line-height: 1.8;
+        }
+        
+        .timeline {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            flex: 1;
+            min-width: 250px;
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .timeline-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-item ul {
+            margin-left: 20px;
+            color: #555;
+        }
+        
+        .timeline-item li {
+            margin-bottom: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-item {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .feature-item strong {
+            color: #856404;
+        }
+        
+        .tech-stack {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tech-stack h3 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+        
+        .tech-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .tech-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            color: #1565c0;
+            font-weight: 500;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #999;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .section-title {
+                font-size: 1.2em;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="emoji">🎬</span>FilmSwiper</h1>
+        <p class="subtitle">Inteligentny System Rekomendacji Filmów z AI</p>
+        
+        <!-- ===== PRZEGLĄD ===== -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">📊</span>Przegląd Projektu</div>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>💡 Cel:</strong> Aplikacja do swiping'u filmów z inteligentnym systemem rekomendacji
+                </div>
+                <div class="feature-item">
+                    <strong>👥 Docelowy użytkownik:</strong> Osoby szukające filmów do obejrzenia
+                </div>
+                <div class="feature-item">
+                    <strong>📱 Platforma:</strong> Android (Kotlin + Jetpack Compose)
+                </div>
+                <div class="feature-item">
+                    <strong>🔌 API:</strong> TMDb, IMDb, Letterboxd
+                </div>
+            </div>
+        </div>
+        
+        <!-- ===== FAZA 1 ===== -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">✅</span>FAZA 1: MVP (OBECNA)</div>
+            
+            <div class="architecture-box">ARCHITEKTURA:
+
+App Layer (UI)
+├── SwipeScreen          [Swiping filmów]
+├── FilterScreen         [Filtrowanie]
+├── MyFilmsScreen        [Obejrzane filmy]
+└── MovieListScreen      [Lista wszystkich]
+
+ViewModel Layer
+└── SwipeViewModel       [Zarządzanie stanem]
+
+Repository Layer
+└── RemoteMovieRepository [Pobieranie filmów]
+
+Network Layer
+├── MovieApiService      [Retrofit]
+└── TMDb API             [Popularne, Top-rated]
+
+Data Layer
+├── Movie                [Model danych]
+└── MovieStatus          [Status obejrzenia]</div>
+            
+            <h3 style="color: #667eea; margin-top: 20px;">Główne Funkcjonalności:</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>✨ Swiping:</strong> Like/Dislike filmy gesturami
+                </div>
+                <div class="feature-item">
+                    <strong>🔍 Filtrowanie:</strong> Po tytule, gatunku, roku
+                </div>
+                <div class="feature-item">
+                    <strong>⭐ Ocenianie:</strong> Skalę 1-10 z gradient visual
+                </div>
+                <div class="feature-item">
+                    <strong>📚 Historia:</strong> Zakładka "Moje filmy"
+                </div>
+            </div>
+        </div>
+        
+        <!-- ===== FAZA 2 ===== -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">🔐</span>FAZA 2: Integracja Kont (4-6 tygodni)</div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>📅 Tydzień 1-2</h4>
+                    <ul>
+                        <li>IMDb OAuth2</li>
+                        <li>Pobieranie ocen</li>
+                        <li>Token management</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>📅 Tydzień 3-4</h4>
+                    <ul>
+                        <li>Letterboxd API</li>
+                        <li>Sync watchlist</li>
+                        <li>Import ratings</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>📅 Tydzień 5-6</h4>
+                    <ul>
+                        <li>Room Database</li>
+                        <li>Merge rankings</li>
+                        <li>Sync background</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 style="color: #667eea; margin-top: 20px;">Architektura Importu:</h3>
+            <div class="architecture-box">Authentication Module
+├── IMDbAuthService      [OAuth2 + Token]
+├── LetterboxdAuthService [API Integration]
+└── TokenStorage         [Encrypted]
+
+Data Import
+├── IMDbImporter         [Ratings + Metadata]
+├── LetterboxdImporter   [Reviews + Ratings]
+└── ImportSyncManager    [Merge & Conflict]
+
+Local Storage
+├── Room Database
+│   ├── movies
+│   ├── ratings
+│   ├── user_accounts
+│   └── sync_history
+└── EncryptedSharedPreferences [Tokens]</div>
+
+            <h3 style="color: #667eea; margin-top: 20px;">Co będzie synchronizowane:</h3>
+            <table>
+                <tr>
+                    <th>Źródło</th>
+                    <th>Dane</th>
+                    <th>Sync Interval</th>
+                </tr>
+                <tr>
+                    <td><strong>IMDb</strong></td>
+                    <td>Rating, watched status, watchlist</td>
+                    <td>1x dziennie</td>
+                </tr>
+                <tr>
+                    <td><strong>Letterboxd</strong></td>
+                    <td>Reviews, rating, watched date</td>
+                    <td>1x dziennie</td>
+                </tr>
+                <tr>
+                    <td><strong>Local</strong></td>
+                    <td>User ratings (1-10)</td>
+                    <td>Real-time</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- ===== FAZA 3 ===== -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">🤖</span>FAZA 3: System Rekomendacyjny AI (8-10 tygodni)</div>
+            
+            <div class="phase">
+                <div class="phase-title">📍 Architektura Rekomendacji:</div>
+                <div class="architecture-box">Recommendation Engine
+
+┌─ USER PROFILE BUILDER ─┐
+│                        │
+├─ collectRatings()      │ Aggregate all user ratings
+├─ buildGenrePrefs()     │ Preference weights
+├─ buildActorPrefs()     │ Favorite creators
+│                        │
+└─ OUTPUT: UserProfile   │ {Action: 0.85, Horror: 0.3...}
+
+
+┌─ FEATURE EXTRACTION ─┐
+│                      │
+├─ Genre vectors       │ [Action, Horror, Comedy...]
+├─ Actor embeddings    │ Actor/Director similarity
+├─ Release year        │ New vs classic preference
+├─ TMDb rating         │ Popularity score
+│                      │
+└─ OUTPUT: MovieVector │ Numeric representation
+
+
+┌─ RECOMMENDATION ALGORITHMS ─┐
+│                             │
+├─ Collaborative Filtering    │ Similar users → their top movies
+├─ Content-Based              │ Similar to high-rated movies
+├─ Hybrid (BEST)              │ 60% collaborative + 40% content
+└─ On-Device ML               │ TensorFlow Lite (optional)
+
+
+┌─ RANKER ─┐
+│          │
+├─ Personalization score
+├─ Novelty score
+├─ Timeliness boost
+│          │
+└─ Final Rank (1-20)
+</div>
+            </div>
+            
+            <h3 style="color: #667eea; margin-top: 20px;">Opcje Implementacji ML:</h3>
+            
+            <div class="phase">
+                <div class="phase-title">Opcja A: On-Device ML (TensorFlow Lite)</div>
+                <div class="phase-content">
+                    <strong>✅ Zalety:</strong> Brak latency, prywatność, offline<br>
+                    <strong>❌ Wady:</strong> Mniejsza wydajność, trudniej aktualizować<br>
+                    <strong>⏱️ Czas:</strong> 8 tygodni<br>
+                    <strong>Stack:</strong> TensorFlow Lite + ML Kit
+                </div>
+            </div>
+            
+            <div class="phase">
+                <div class="phase-title">Opcja B: Backend ML Service (Python)</div>
+                <div class="phase-content">
+                    <strong>✅ Zalety:</strong> Potężne modele, łatwa aktualizacja<br>
+                    <strong>❌ Wady:</strong> Network dependency, prywatność<br>
+                    <strong>⏱️ Czas:</strong> 10 tygodni<br>
+                    <strong>Stack:</strong> FastAPI + scikit-learn + PostgreSQL
+                </div>
+            </div>
+            
+            <div class="phase" style="border-color: #28a745;">
+                <div class="phase-title">🏆 Opcja C: Hybrid (REKOMENDOWANA)</div>
+                <div class="phase-content">
+                    <strong>✅ Lokalne:</strong> Podstawowe rekomendacje (zawsze dostępne)<br>
+                    <strong>✅ Zdalne:</strong> Zaawansowane algorytmy + A/B testing<br>
+                    <strong>⏱️ Czas:</strong> 10-12 tygodni<br>
+                    <strong>Stack:</strong> TensorFlow Lite + FastAPI
+                </div>
+            </div>
+            
+            <h3 style="color: #667eea; margin-top: 20px;">Nowe Encje Bazy Danych:</h3>
+            <table>
+                <tr>
+                    <th>Tabela</th>
+                    <th>Pola</th>
+                    <th>Cel</th>
+                </tr>
+                <tr>
+                    <td><strong>user_ratings</strong></td>
+                    <td>movieId, userId, rating, source, ratedAt</td>
+                    <td>Historia ocen użytkownika</td>
+                </tr>
+                <tr>
+                    <td><strong>viewing_patterns</strong></td>
+                    <td>userId, genreId, avgRating, watchCount</td>
+                    <td>Preferencje gatunków</td>
+                </tr>
+                <tr>
+                    <td><strong>recommendation_history</strong></td>
+                    <td>userId, movieId, score, interacted</td>
+                    <td>A/B testing & feedback loop</td>
+                </tr>
+                <tr>
+                    <td><strong>user_profiles_ml</strong></td>
+                    <td>userId, genreWeights, actorWeights</td>
+                    <td>Profil ML użytkownika</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- ===== FAZA 4 ===== -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">🚀</span>FAZA 4+: Advanced Features (Przyszłość)</div>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>👥 Social:</strong> Porównywanie rating z przyjaciółmi
+                </div>
+                <div class="feature-item">
+                    <strong>🎬 Movie Night:</strong> Głosowanie grupowe na film
+                </div>
+                <div class="feature-item">
+                    <strong>📱 Notifications:</strong> Nowe rekomendacje push
+                </div>
+                <div class="feature-item">
+                    <strong>🎯 Trending:</strong> Co oglądają inni użytkownicy
+                </div>
+                <div class="feature-item">
+                    <strong>📊 Analytics:</strong> Statystyki oglądalności
+                </div>
+                <div class="feature-item">
+                    <strong>🌐 Web App:</strong> Synchronizacja z webem
+                </div>
+            </div>
+        </div>
+        
+        <!-- ===== TIMELINE ===== -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">📈</span>Timeline Rozwoju</div>
+            
+            <table>
+                <tr>
+                    <th>Faza</th>
+                    <th>Opis</th>
+                    <th>Czas</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td><strong>FAZA 1</strong></td>
+                    <td>MVP - Swiping + Filtrowanie + Ocenianie</td>
+                    <td>✅ Ukończono</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td><strong>FAZA 2</strong></td>
+                    <td>Integracja IMDb/Letterboxd + Room DB</td>
+                    <td>4-6 tygodni</td>
+                    <td>0%</td>
+                </tr>
+                <tr>
+                    <td><strong>FAZA 3</strong></td>
+                    <td>System rekomendacyjny AI</td>
+                    <td>8-10 tygodni</td>
+                    <td>0%</td>
+                </tr>
+                <tr>
+                    <td><strong>FAZA 4</strong></td>
+                    <td>Social features + Analytics</td>
+                    <td>6-8 tygodni</td>
+                    <td>0%</td>
+                </tr>
+                <tr>
+                    <td><strong>TOTAL</strong></td>
+                    <td>Produkcja</td>
+                    <td>6-8 miesięcy</td>
+                    <td>-</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- ===== TECH STACK ===== -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">⚙️</span>Tech Stack</div>
+            
+            <div class="tech-stack">
+                <h3>Frontend (Android)</h3>
+                <div class="tech-list">
+                    <div class="tech-item">Kotlin + Jetpack Compose</div>
+                    <div class="tech-item">MVVM + StateFlow</div>
+                    <div class="tech-item">Coroutines</div>
+                    <div class="tech-item">Retrofit + Gson</div>
+                    <div class="tech-item">Coil (Image Loading)</div>
+                </div>
+            </div>
+            
+            <div class="tech-stack">
+                <h3>Local Storage</h3>
+                <div class="tech-list">
+                    <div class="tech-item">Room Database</div>
+                    <div class="tech-item">EncryptedSharedPreferences</div>
+                    <div class="tech-item">DataStore</div>
+                </div>
+            </div>
+            
+            <div class="tech-stack">
+                <h3>ML & AI</h3>
+                <div class="tech-list">
+                    <div class="tech-item">TensorFlow Lite</div>
+                    <div class="tech-item">ML Kit (Google)</div>
+                    <div class="tech-item">scikit-learn (backend)</div>
+                    <div class="tech-item">XGBoost (optional)</div>
+                </div>
+            </div>
+            
+            <div class="tech-stack">
+                <h3>Backend (Future)</h3>
+                <div class="tech-list">
+                    <div class="tech-item">FastAPI (Python)</div>
+                    <div class="tech-item">PostgreSQL</div>
+                    <div class="tech-item">Redis (Caching)</div>
+                    <div class="tech-item">Docker</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ===== RISKS ===== -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">⚠️</span>Potencjalne Ryzyka i Rozwiązania</div>
+            
+            <table>
+                <tr>
+                    <th>Ryzyko</th>
+                    <th>Wpływ</th>
+                    <th>Rozwiązanie</th>
+                </tr>
+                <tr>
+                    <td>IMDb API limity</td>
+                    <td>Wysoki</td>
+                    <td>Caching, offline mode, rate limiting</td>
+                </tr>
+                <tr>
+                    <td>ML model accuracy</td>
+                    <td>Średni</td>
+                    <td>A/B testing, user feedback loop</td>
+                </tr>
+                <tr>
+                    <td>Privacy (user data)</td>
+                    <td>Wysoki</td>
+                    <td>On-device ML, encryption, GDPR compliance</td>
+                </tr>
+                <tr>
+                    <td>Cold start problem</td>
+                    <td>Średni</td>
+                    <td>Hybrid approach, hybrid recommendations</td>
+                </tr>
+                <tr>
+                    <td>Skalowanie ML</td>
+                    <td>Średni</td>
+                    <td>Backend service, distributed training</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p>📄 FilmSwiper Project Documentation | Wersja 1.0 | Grudzień 2024</p>
+            <p>Możesz wyeksportować tę stronę jako PDF: CTRL+P → Save as PDF</p>
+        </div>
+    </div>
+</body>
+</html>
